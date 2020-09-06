@@ -4,9 +4,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WoWAddonUpdater"
+        xmlns:viewModels="clr-namespace:WoWAddonUpdater.ViewModels"
+        xmlns:controls="clr-namespace:WoWAddonUpdater.Controls"
         mc:Ignorable="d"
+        Background="#222"
+        Closing="OnClose"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
 
+    <WindowChrome.WindowChrome>
+        <WindowChrome ResizeBorderThickness="{Binding ResizeBorderThickness}" CaptionHeight="{Binding TitlebarHeight}" />
+    </WindowChrome.WindowChrome>
+
+    <Window.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="#202020">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.ColumnSpan="2" Foreground="LightGray" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">Togel's Addon Updater</TextBlock>
+            <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button WindowChrome.IsHitTestVisibleInChrome="True" Width="20" Margin="1" Foreground="LightGray" Background="Transparent" Command="{Binding MinimizeCommand}">-</Button>
+                <Button WindowChrome.IsHitTestVisibleInChrome="True" Width="20" Margin="1" Foreground="LightGray" Background="Transparent" Command="{Binding CloseCommand}">X</Button>
+            </StackPanel>
+        </Grid>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button Margin="2" Width="100">Upload</Button>
+            <Button Margin="2" Width="100">Download</Button>
+            <Button Margin="2" Width="100" Command="{Binding Addons.RefreshCommand}">Refresh</Button>
+            <Button Margin="2" Width="100" Command="{Binding AutoUpdateCommand}" Background="{Binding AutoUpdaterBackgroundBrush}">Auto Update</Button>
+        </StackPanel>
+        <controls:AddonList Grid.Row="2" Addons="{Binding Addons}"/>
     </Grid>
 </Window>
