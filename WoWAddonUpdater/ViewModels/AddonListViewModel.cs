@@ -7,9 +7,11 @@ namespace WoWAddonUpdater.ViewModels
 {
     public class AddonListViewModel : BaseViewModel
     {
-        public ObservableCollection<AddonViewModel> Addons { get; set; } = new ObservableCollection<AddonViewModel>();
+        public ObservableCollection<AddonViewModel> Addons { get; set; }
 
         public ICommand RefreshCommand { get; set; }
+
+        public string Name { get; set; } = "AddonlistViewModel";
 
         public AddonListViewModel()
         {
@@ -19,13 +21,7 @@ namespace WoWAddonUpdater.ViewModels
         private void OnRefresh()
         {
             AddonUpdater updater = new AddonUpdater();
-
-            var a = updater.GetViewModel();
-
-            foreach(var b in a)
-            {
-                Addons.Add(b); 
-            }
+            Addons = updater.GetViewModel();
         }
     }
 }

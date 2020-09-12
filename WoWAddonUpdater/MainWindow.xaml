@@ -9,7 +9,9 @@
         mc:Ignorable="d"
         Background="#222"
         Closing="OnClose"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow"
+        Height="400"
+        Width="300">
 
     <WindowChrome.WindowChrome>
         <WindowChrome ResizeBorderThickness="{Binding ResizeBorderThickness}" CaptionHeight="{Binding TitlebarHeight}" />
@@ -22,7 +24,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -37,12 +39,34 @@
                 <Button WindowChrome.IsHitTestVisibleInChrome="True" Width="20" Margin="1" Foreground="LightGray" Background="Transparent" Command="{Binding CloseCommand}">X</Button>
             </StackPanel>
         </Grid>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Margin="2" Width="100">Upload</Button>
-            <Button Margin="2" Width="100">Download</Button>
-            <Button Margin="2" Width="100" Command="{Binding Addons.RefreshCommand}">Refresh</Button>
-            <Button Margin="2" Width="100" Command="{Binding AutoUpdateCommand}" Background="{Binding AutoUpdaterBackgroundBrush}">Auto Update</Button>
-        </StackPanel>
-        <controls:AddonList Grid.Row="2" Addons="{Binding Addons}"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Margin="2 2 1 2">
+                <TextBlock TextAlignment="Center">
+                    Save<LineBreak/>
+                    Backup
+                </TextBlock>
+            </Button>
+            <Button Grid.Column="1" Margin="1 2 1 2">
+                <TextBlock TextAlignment="Center">
+                    Install<LineBreak/>
+                    Backup
+                </TextBlock>
+            </Button>
+            <Button Grid.Column="2" Margin="1 2 1 2" Command="{Binding AddonsViewModel.RefreshCommand}">Refresh</Button>
+            <Button Grid.Column="3" Margin="1 2 2 2" Command="{Binding AutoUpdateCommand}" Background="{Binding AutoUpdaterBackgroundBrush}">
+                <TextBlock TextAlignment="Center">
+                    Auto<LineBreak/>
+                    Update
+                </TextBlock>
+            </Button>
+        </Grid>
+        <controls:AddonList Grid.Row="2" DataContext="{Binding AddonsViewModel}"/>
     </Grid>
 </Window>

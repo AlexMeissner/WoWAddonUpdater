@@ -20,11 +20,14 @@ namespace WoWAddonUpdater.Functions
 
         public ObservableCollection<AddonViewModel> GetViewModel()
         {
-            ObservableCollection<AddonViewModel> addons = new ObservableCollection<AddonViewModel>();
-            addons.Add(new AddonViewModel() { Name = "Big Wigs", Blacklisted = true, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" }); ;
-            addons.Add(new AddonViewModel() { Name = "ElvUI", Blacklisted = false, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" });
-            addons.Add(new AddonViewModel() { Name = "Details", Blacklisted = false, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" });
-            addons.Add(new AddonViewModel() { Name = "WeakAuras", Blacklisted = true, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" });
+            ObservableCollection<AddonViewModel> addons = new ObservableCollection<AddonViewModel>
+            {
+                new AddonViewModel() { Name = "Big Wigs", Blacklisted = true, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" },
+                new AddonViewModel() { Name = "ElvUI", Blacklisted = false, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" },
+                new AddonViewModel() { Name = "Details", Blacklisted = false, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" },
+                new AddonViewModel() { Name = "WeakAuras", Blacklisted = true, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" }
+            };
+
             return addons;
         }
 
