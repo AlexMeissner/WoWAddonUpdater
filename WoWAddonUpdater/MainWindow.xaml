@@ -11,7 +11,7 @@
         Closing="OnClose"
         Title="MainWindow"
         Height="400"
-        Width="300">
+        Width="800">
 
     <WindowChrome.WindowChrome>
         <WindowChrome ResizeBorderThickness="{Binding ResizeBorderThickness}" CaptionHeight="{Binding TitlebarHeight}" />
@@ -48,25 +48,37 @@
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0" Margin="2 2 1 2">
-                <TextBlock TextAlignment="Center">
+                <TextBlock FontWeight="Bold" TextAlignment="Center">
                     Save<LineBreak/>
                     Backup
                 </TextBlock>
             </Button>
             <Button Grid.Column="1" Margin="1 2 1 2">
-                <TextBlock TextAlignment="Center">
+                <TextBlock FontWeight="Bold" TextAlignment="Center">
                     Install<LineBreak/>
                     Backup
                 </TextBlock>
             </Button>
-            <Button Grid.Column="2" Margin="1 2 1 2" Command="{Binding AddonsViewModel.RefreshCommand}">Refresh</Button>
+            <Button Grid.Column="2" Margin="1 2 1 2" Command="{Binding AddonsViewModel.RefreshCommand}">
+                <TextBlock FontWeight="Bold" TextAlignment="Center">
+                    Refresh
+                </TextBlock>
+            </Button>
             <Button Grid.Column="3" Margin="1 2 2 2" Command="{Binding AutoUpdateCommand}" Background="{Binding AutoUpdaterBackgroundBrush}">
-                <TextBlock TextAlignment="Center">
+                <TextBlock FontWeight="Bold" TextAlignment="Center">
                     Auto<LineBreak/>
                     Update
                 </TextBlock>
             </Button>
         </Grid>
-        <controls:AddonList Grid.Row="2" DataContext="{Binding AddonsViewModel}"/>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <controls:AddonList Grid.Column="0" DataContext="{Binding AddonsViewModel}"/>
+            <controls:LogControl Grid.Column="1"/>
+        </Grid>
     </Grid>
 </Window>

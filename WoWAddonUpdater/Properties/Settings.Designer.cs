@@ -46,5 +46,17 @@ namespace WoWAddonUpdater.Properties {
                 this["IsAutoUpdateEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Log {
+            get {
+                return ((string)(this["Log"]));
+            }
+            set {
+                this["Log"] = value;
+            }
+        }
     }
 }

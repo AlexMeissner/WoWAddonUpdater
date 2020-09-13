@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Linq;
 using System.IO.Compression;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using WoWAddonUpdater.CurseForge;
-using System.Collections.ObjectModel;
 using WoWAddonUpdater.ViewModels;
 
 namespace WoWAddonUpdater.Functions
@@ -20,23 +20,16 @@ namespace WoWAddonUpdater.Functions
 
         public ObservableCollection<AddonViewModel> GetViewModel()
         {
-            ObservableCollection<AddonViewModel> addons = new ObservableCollection<AddonViewModel>
-            {
-                new AddonViewModel() { Name = "Big Wigs", Blacklisted = true, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" },
-                new AddonViewModel() { Name = "ElvUI", Blacklisted = false, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" },
-                new AddonViewModel() { Name = "Details", Blacklisted = false, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" },
-                new AddonViewModel() { Name = "WeakAuras", Blacklisted = true, Icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/1200px-WoW_icon.svg.png" }
-            };
-
-            return addons;
+            var curseData = Refresh();
+            return new ObservableCollection<AddonViewModel>(curseData.Select(d => new AddonViewModel() { Name = d.Name, Blacklisted = false, CurseID = d.ID, Icon = d.Icon }));
         }
 
         public HashSet<CurseData> Refresh()
         {
             var addonDirectories = GetAddonDirectoryNames();
-            var curseData = GetCurseForgeData();
+            var curseData = GetCurseForgeData(addonDirectories);
 
-            return new HashSet<CurseData>(curseData.Where(f => addonDirectories.Contains(f.Name)));
+            return curseData;
         }
 
         public void UpdateAddon(string downloadURL)
@@ -76,10 +69,13 @@ namespace WoWAddonUpdater.Functions
 
         private HashSet<string> GetAddonDirectoryNames()
         {
+            
             HashSet<string> addonDirectories = new HashSet<string>();
 
             try
             {
+                var fileVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(Path.Combine(Properties.Settings.Default.BaseDirectory, "Wow.exe")).FileVersion;
+
                 if (Directory.Exists(AddonBaseDirectory))
                 {
                     foreach (string addonDirectory in Directory.GetDirectories(AddonBaseDirectory))
@@ -99,8 +95,12 @@ namespace WoWAddonUpdater.Functions
             return addonDirectories;
         }
 
-        private HashSet<CurseData> GetCurseForgeData()
+        private HashSet<CurseData> GetCurseForgeData(HashSet<string> addonDirectories)
         {
+            // Installed Addon Folders as input
+            // If modules of current json contains any of the folder names then add to hashset
+            // else ignore
+
             HashSet<CurseData> data = new HashSet<CurseData>();
 
             using (HttpClient restAPI = new HttpClient())
@@ -129,11 +129,23 @@ namespace WoWAddonUpdater.Functions
 
                         foreach (var addonData in addons)
                         {
-                            data.Add(new CurseData()
+                            if (addonData.LatestFiles.Count > 0)
                             {
-                                ID = addonData.Id,
-                                Name = GetAddonName(addonData)
-                            });
+                                foreach (var module in addonData.LatestFiles.First().Modules)
+                                {
+                                    if (addonDirectories.Contains(module.Foldername))
+                                    {
+                                        data.Add(new CurseData()
+                                        {
+                                            ID = addonData.Id,
+                                            Name = addonData.Name,
+                                            Icon = GetIcon(addonData)
+                                        });
+
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                     catch (Exception exception)
@@ -148,22 +160,13 @@ namespace WoWAddonUpdater.Functions
             return data;
         }
 
-        private string GetAddonName(AddonData addonData)
+        private string GetIcon(AddonData addonData)
         {
             try
             {
-                for (int index = addonData.LatestFiles.Count - 1; index >= 0; --index)
+                if (addonData.Attachments.Count > 0)
                 {
-                    if (addonData.LatestFiles[index].ReleaseType == 1)
-                    {
-                        foreach (var module in addonData.LatestFiles[index].Modules)
-                        {
-                            if (module.Type == 3)
-                            {
-                                return module.Foldername;
-                            }
-                        }
-                    }
+                    return addonData.Attachments.First().ThumbnailUrl;
                 }
             }
             catch (Exception exception)
@@ -171,7 +174,8 @@ namespace WoWAddonUpdater.Functions
                 Logger.Exception(exception);
             }
 
-            return string.Empty;
+            const string defaultIcon = "https://blznav.akamaized.net/img/games/logo-wow-3dd2cfe06df74407.png";
+            return defaultIcon;
         }
     }
 }

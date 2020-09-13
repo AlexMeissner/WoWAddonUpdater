@@ -12,16 +12,16 @@
         <viewModels:AddonListViewModel/>
     </UserControl.DataContext>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer Margin="2" VerticalScrollBarVisibility="Auto">
         <ItemsControl ItemsSource="{Binding Addons}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" BorderThickness="1">
-                        <Grid Height="30" Background="{Binding BackgroundBrush}">
+                        <Grid Height="40" Background="{Binding BackgroundBrush}">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="40" />
                                 <ColumnDefinition Width="4" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Image Grid.Column="0" Margin="1" Source="{Binding Icon}"/>
