@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,7 @@ namespace WoWAddonUpdater.Functions
 {
     public class AddonUpdater
     {
+        private readonly FileVersion WowVersion = new FileVersion(FileVersionInfo.GetVersionInfo(Path.Combine(Properties.Settings.Default.BaseDirectory, "Wow.exe")).FileVersion);
         private readonly string AddonBaseDirectory = Path.Combine(Properties.Settings.Default.BaseDirectory, @"Interface\Addons");
         private readonly string BaseAddress = "https://addons-ecs.forgesvc.net";
 
@@ -69,13 +71,10 @@ namespace WoWAddonUpdater.Functions
 
         private HashSet<string> GetAddonDirectoryNames()
         {
-            
             HashSet<string> addonDirectories = new HashSet<string>();
 
             try
             {
-                var fileVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(Path.Combine(Properties.Settings.Default.BaseDirectory, "Wow.exe")).FileVersion;
-
                 if (Directory.Exists(AddonBaseDirectory))
                 {
                     foreach (string addonDirectory in Directory.GetDirectories(AddonBaseDirectory))
@@ -97,10 +96,6 @@ namespace WoWAddonUpdater.Functions
 
         private HashSet<CurseData> GetCurseForgeData(HashSet<string> addonDirectories)
         {
-            // Installed Addon Folders as input
-            // If modules of current json contains any of the folder names then add to hashset
-            // else ignore
-
             HashSet<CurseData> data = new HashSet<CurseData>();
 
             using (HttpClient restAPI = new HttpClient())
@@ -129,9 +124,11 @@ namespace WoWAddonUpdater.Functions
 
                         foreach (var addonData in addons)
                         {
-                            if (addonData.LatestFiles.Count > 0)
+                            LatestFile latestFile = GetValidVersion(addonData.LatestFiles);
+
+                            if (!addonData.IsExperimental && latestFile != null)
                             {
-                                foreach (var module in addonData.LatestFiles.First().Modules)
+                                foreach (var module in latestFile.Modules)
                                 {
                                     if (addonDirectories.Contains(module.Foldername))
                                     {
@@ -160,11 +157,52 @@ namespace WoWAddonUpdater.Functions
             return data;
         }
 
+        private LatestFile GetValidVersion(List<LatestFile> latestFiles)
+        {
+            // TODO: Get "newest" valid LatestFile
+
+            foreach (var latestFile in latestFiles)
+            {
+                if (latestFile.GameVersionFlavor.Equals("wow_retail") &&
+                    DoesMajorMatch(latestFile))
+                {
+                    return latestFile;
+                }
+            }
+
+            return null;
+        }
+
+        private bool DoesMajorMatch(LatestFile latestFile)
+        {
+            foreach (var gameVersion in latestFile.GameVersion)
+            {
+                var addonVersion = new FileVersion(gameVersion);
+
+                if (WowVersion.Major == addonVersion.Major)
+                {
+                    return true;
+                }
+            }
+
+            foreach (var gameVersion in latestFile.SortableGameVersion)
+            {
+                var addonVersion = new FileVersion(gameVersion.GameVersion);
+
+                if (WowVersion.Major == addonVersion.Major)
+                {
+                    return true;
+                }
+            }
+
+            return latestFile.GameVersion.Count() == 0 && latestFile.SortableGameVersion.Count() == 0;
+        }
+
         private string GetIcon(AddonData addonData)
         {
             try
             {
-                if (addonData.Attachments.Count > 0)
+                if (addonData.Attachments.Count() > 0)
                 {
                     return addonData.Attachments.First().ThumbnailUrl;
                 }

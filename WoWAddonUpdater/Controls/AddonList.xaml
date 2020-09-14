@@ -22,11 +22,36 @@
                                 <ColumnDefinition Width="40" />
                                 <ColumnDefinition Width="4" />
                                 <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="40" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Image Grid.Column="0" Margin="1" Source="{Binding Icon}"/>
                             <TextBlock Grid.Column="2" Foreground="LightGray" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Name}" />
-                            <Button Grid.Column="3" Margin="2" Command="{Binding DownloadCommand}">Update</Button>
+                            <CheckBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Blacklisted}">
+                                <CheckBox.Template>
+                                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                                        <Border Margin="5">
+                                            <ContentControl x:Name="CheckboxIcon" Padding="5" Margin="5" ContentTemplate="{StaticResource IconUnlock}"/>
+                                            <Border.Style>
+                                                <Style>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="Border.IsMouseOver" Value="True">
+                                                            <Setter Property="Border.Padding" Value="1"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="CheckboxIcon" Property="ContentTemplate" Value="{StaticResource IconLock}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </CheckBox.Template>
+                                <!--<ContentControl ContentTemplate="{StaticResource IconLock}"/>-->
+                            </CheckBox>
+                            <Button Grid.Column="4" Margin="2" Command="{Binding DownloadCommand}">Update</Button>
                         </Grid>
                     </Border>
                 </DataTemplate>

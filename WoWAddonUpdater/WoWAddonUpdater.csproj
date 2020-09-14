@@ -118,6 +118,7 @@
     <Compile Include="CurseForge\Module.cs" />
     <Compile Include="CurseForge\Section.cs" />
     <Compile Include="Functions\AddonUpdater.cs" />
+    <Compile Include="Functions\FileVersion.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ViewModels\AddonListViewModel.cs" />
     <Compile Include="ViewModels\AddonViewModel.cs" />
@@ -146,6 +147,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Resources\Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
