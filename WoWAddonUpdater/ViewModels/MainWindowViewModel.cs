@@ -10,7 +10,7 @@ namespace WoWAddonUpdater.ViewModels
     public class MainWindowViewModel : BaseViewModel
     {
         public bool IsAutoUpdateActive { get; set; } = Properties.Settings.Default.IsAutoUpdateEnabled;
-        public Brush AutoUpdaterBackgroundBrush => IsAutoUpdateActive ? Brushes.LightGreen : Brushes.Coral;
+        public Brush AutoUpdaterBackgroundBrush => IsAutoUpdateActive ? Brushes.DarkGreen : Brushes.DarkRed;
         public Thickness ResizeBorderThickness { get; set; } = new Thickness(2);
         public int TitlebarHeight { get; set; } = 20;
         public AddonListViewModel AddonsViewModel { get; set; } = new AddonListViewModel();

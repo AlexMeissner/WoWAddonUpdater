@@ -47,13 +47,13 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Margin="2 2 1 2">
+            <Button Grid.Column="0" Margin="2 2 1 2" IsEnabled="False">
                 <TextBlock FontWeight="Bold" TextAlignment="Center">
                     Save<LineBreak/>
                     Backup
                 </TextBlock>
             </Button>
-            <Button Grid.Column="1" Margin="1 2 1 2">
+            <Button Grid.Column="1" Margin="1 2 1 2" IsEnabled="False">
                 <TextBlock FontWeight="Bold" TextAlignment="Center">
                     Install<LineBreak/>
                     Backup
