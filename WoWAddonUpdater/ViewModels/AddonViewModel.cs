@@ -58,7 +58,8 @@ namespace WoWAddonUpdater.ViewModels
 
         private void Update()
         {
-            System.Console.WriteLine("TODO: Update Addon");
+            InstalledVersionDate = DateTime.Now;
+            Logger.Message("TODO: Update Addon");
         }
     }
 }

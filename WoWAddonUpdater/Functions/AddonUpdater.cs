@@ -22,16 +22,9 @@ namespace WoWAddonUpdater.Functions
 
         public ObservableCollection<AddonViewModel> GetViewModel()
         {
-            var curseData = Refresh();
-            return new ObservableCollection<AddonViewModel>(curseData.Select(d => new AddonViewModel() { Name = d.Name, Blacklisted = false, CurseID = d.ID, Icon = d.Icon }));
-        }
-
-        public HashSet<CurseData> Refresh()
-        {
             var addonDirectories = GetAddonDirectoryNames();
             var curseData = GetCurseForgeData(addonDirectories);
-
-            return curseData;
+            return new ObservableCollection<AddonViewModel>(curseData);
         }
 
         public void UpdateAddon(string downloadURL)
@@ -94,9 +87,9 @@ namespace WoWAddonUpdater.Functions
             return addonDirectories;
         }
 
-        private HashSet<CurseData> GetCurseForgeData(HashSet<string> addonDirectories)
+        private HashSet<AddonViewModel> GetCurseForgeData(HashSet<string> addonDirectories)
         {
-            HashSet<CurseData> data = new HashSet<CurseData>();
+            HashSet<AddonViewModel> data = new HashSet<AddonViewModel>();
 
             using (HttpClient restAPI = new HttpClient())
             {
@@ -132,11 +125,14 @@ namespace WoWAddonUpdater.Functions
                                 {
                                     if (addonDirectories.Contains(module.Foldername))
                                     {
-                                        data.Add(new CurseData()
+                                        data.Add(new AddonViewModel()
                                         {
-                                            ID = addonData.Id,
+                                            CurseID = addonData.Id,
                                             Name = addonData.Name,
-                                            Icon = GetIcon(addonData)
+                                            Icon = GetIcon(addonData),
+                                            AvailableVersionDate = DateTime.Parse(latestFile.FileDate),
+                                            DownloadUrl = latestFile.DownloadUrl,
+                                            Blacklisted = false
                                         });
 
                                         break;

@@ -110,7 +110,6 @@
     <Compile Include="CurseForge\Attachment.cs" />
     <Compile Include="CurseForge\Author.cs" />
     <Compile Include="CurseForge\Category.cs" />
-    <Compile Include="CurseForge\CurseData.cs" />
     <Compile Include="CurseForge\Dependency.cs" />
     <Compile Include="CurseForge\GameVersionLatestFile.cs" />
     <Compile Include="CurseForge\GameVersionSortable.cs" />
