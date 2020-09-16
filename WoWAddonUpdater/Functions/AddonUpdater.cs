@@ -208,7 +208,7 @@ namespace WoWAddonUpdater.Functions
                 Logger.Exception(exception);
             }
 
-            const string defaultIcon = "https://blznav.akamaized.net/img/games/logo-wow-3dd2cfe06df74407.png";
+            const string defaultIcon = "https://www.macupdate.com/images/icons512/38553.png";
             return defaultIcon;
         }
     }

@@ -16,7 +16,8 @@ namespace WoWAddonUpdater.ViewModels
         public uint CurseID { get; set; }
         public DateTime InstalledVersionDate { get; set; }
         public DateTime AvailableVersionDate { get; set; }
-        public Visibility UpdateButtonVisibility => IsUpToDate ? Visibility.Hidden : Visibility.Visible;
+        public Visibility UpdateButtonVisibility => IsUpToDate || Blacklisted ? Visibility.Hidden : Visibility.Visible;
+        public Brush BackgroundBrush => Blacklisted ? Brushes.Black : (SolidColorBrush)(new BrushConverter().ConvertFrom("#222"));
         public bool IsUpToDate
         {
             get
@@ -27,25 +28,6 @@ namespace WoWAddonUpdater.ViewModels
                 }
 
                 return false;
-            }
-        }
-
-        public Brush BackgroundBrush
-        {
-            get
-            {
-                if (Blacklisted)
-                {
-                    return Brushes.Black;
-                }
-                else if (IsUpToDate)
-                {
-                    return Brushes.DarkGreen;
-                }
-                else
-                {
-                    return Brushes.DarkRed;
-                }
             }
         }
 

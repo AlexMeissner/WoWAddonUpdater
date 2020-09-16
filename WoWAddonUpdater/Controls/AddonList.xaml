@@ -23,11 +23,14 @@
                                 <ColumnDefinition Width="4" />
                                 <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="40" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="40" />
                             </Grid.ColumnDefinitions>
                             <Image Grid.Column="0" Margin="1" Source="{Binding Icon}"/>
                             <TextBlock Grid.Column="2" Foreground="LightGray" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Name}" />
-                            <CheckBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Blacklisted}">
+                            <Button Grid.Column="3" Margin="5" Background="Transparent" BorderThickness="0" Visibility="{Binding UpdateButtonVisibility}" Command="{Binding DownloadCommand}">
+                                <ContentControl Padding="5" Margin="5" ContentTemplate="{StaticResource IconDownload}"/>
+                            </Button>
+                            <CheckBox Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Blacklisted}">
                                 <CheckBox.Template>
                                     <ControlTemplate TargetType="{x:Type CheckBox}">
                                         <Border Margin="5">
@@ -54,8 +57,7 @@
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </CheckBox.Template>
-                            </CheckBox>
-                            <Button Grid.Column="4" Margin="2" Visibility="{Binding UpdateButtonVisibility}" Command="{Binding DownloadCommand}">Update</Button>
+                            </CheckBox>                            
                         </Grid>
                     </Border>
                 </DataTemplate>
