@@ -5,6 +5,12 @@ namespace WoWAddonUpdater.Functions
 {
     public class FileVersion
     {
+        public int Major { get; set; } = 0;
+        public int Minor { get; set; } = 0;
+        public int Patch { get; set; } = 0;
+
+        public FileVersion() { }
+
         public FileVersion(string version)
         {
             try
@@ -20,8 +26,32 @@ namespace WoWAddonUpdater.Functions
             }
         }
 
-        public int Major { get; set; } = 0;
-        public int Minor { get; set; } = 0;
-        public int Patch { get; set; } = 0;
+        public static bool operator <(FileVersion lhs, FileVersion rhs)
+        {
+            return lhs.Major < rhs.Major ||
+                (lhs.Major == rhs.Major && lhs.Minor < rhs.Minor) ||
+                (lhs.Major == rhs.Major && lhs.Minor == rhs.Minor && lhs.Patch < rhs.Patch);
+        }
+
+        public static bool operator >(FileVersion lhs, FileVersion rhs)
+        {
+            return lhs.Major > rhs.Major ||
+                (lhs.Major == rhs.Major && lhs.Minor > rhs.Minor) ||
+                (lhs.Major == rhs.Major && lhs.Minor == rhs.Minor && lhs.Patch > rhs.Patch);
+        }
+
+        public static bool operator <=(FileVersion lhs, FileVersion rhs)
+        {
+            return lhs.Major < rhs.Major ||
+                (lhs.Major == rhs.Major && lhs.Minor < rhs.Minor) ||
+                (lhs.Major == rhs.Major && lhs.Minor == rhs.Minor && lhs.Patch <= rhs.Patch);
+        }
+
+        public static bool operator >=(FileVersion lhs, FileVersion rhs)
+        {
+            return lhs.Major > rhs.Major ||
+                (lhs.Major == rhs.Major && lhs.Minor > rhs.Minor) ||
+                (lhs.Major == rhs.Major && lhs.Minor == rhs.Minor && lhs.Patch >= rhs.Patch);
+        }
     }
 }

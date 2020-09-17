@@ -117,7 +117,7 @@ namespace WoWAddonUpdater.Functions
 
                         foreach (var addonData in addons)
                         {
-                            LatestFile latestFile = GetValidVersion(addonData.LatestFiles);
+                            LatestFile latestFile = GetHighestUsableLatestFile(addonData.LatestFiles);
 
                             if (!addonData.IsExperimental && latestFile != null)
                             {
@@ -153,45 +153,56 @@ namespace WoWAddonUpdater.Functions
             return data;
         }
 
-        private LatestFile GetValidVersion(List<LatestFile> latestFiles)
+        private LatestFile GetHighestUsableLatestFile(List<LatestFile> latestFiles)
         {
-            // TODO: Get "newest" valid LatestFile
+            LatestFile bestMatch = null;
+            FileVersion bestMatchVersion = new FileVersion();
+            DateTime bestMatchDate = new DateTime();
 
             foreach (var latestFile in latestFiles)
             {
-                if (latestFile.GameVersionFlavor.Equals("wow_retail") &&
-                    DoesMajorMatch(latestFile))
+                if (latestFile.GameVersionFlavor.Equals("wow_retail"))
                 {
-                    return latestFile;
+                    var version = GetHighestUsableVersion(latestFile);
+                    var date = DateTime.Parse(latestFile.FileDate);
+
+                    if (version >= bestMatchVersion && date > bestMatchDate)
+                    {
+                        bestMatch = latestFile;
+                        bestMatchDate = date;
+                        bestMatchVersion = version;
+                    }
                 }
             }
 
-            return null;
+            return bestMatch;
         }
 
-        private bool DoesMajorMatch(LatestFile latestFile)
+        private FileVersion GetHighestUsableVersion(LatestFile latestFile)
         {
+            FileVersion fileVersion = new FileVersion();
+
             foreach (var gameVersion in latestFile.GameVersion)
             {
-                var addonVersion = new FileVersion(gameVersion);
+                var version = new FileVersion(gameVersion);
 
-                if (WowVersion.Major == addonVersion.Major)
+                if (version > fileVersion && version <= WowVersion)
                 {
-                    return true;
+                    fileVersion = version;
                 }
             }
 
             foreach (var gameVersion in latestFile.SortableGameVersion)
             {
-                var addonVersion = new FileVersion(gameVersion.GameVersion);
+                var version = new FileVersion(gameVersion.GameVersion);
 
-                if (WowVersion.Major == addonVersion.Major)
+                if (version > fileVersion && version <= WowVersion)
                 {
-                    return true;
+                    fileVersion = version;
                 }
             }
 
-            return latestFile.GameVersion.Count() == 0 && latestFile.SortableGameVersion.Count() == 0;
+            return fileVersion;
         }
 
         private string GetIcon(AddonData addonData)
