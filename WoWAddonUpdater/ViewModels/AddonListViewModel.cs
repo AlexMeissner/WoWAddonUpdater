@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Linq;
+using System.Windows.Input;
 using System.Collections.ObjectModel;
 using WoWAddonUpdater.Command;
 using WoWAddonUpdater.Functions;
@@ -18,8 +20,29 @@ namespace WoWAddonUpdater.ViewModels
 
         private void OnRefresh()
         {
-            AddonUpdater updater = new AddonUpdater();
-            Addons = updater.GetViewModel();
+            try
+            {
+                var updatedAddons = new AddonUpdater().GetViewModel();
+
+                foreach (var updatedAddon in updatedAddons)
+                {
+                    var match = Addons.Where(x => x.Name.Equals(updatedAddon.Name));
+
+                    if (match.Count() > 0)
+                    {
+                        var addon = match.First();
+                        updatedAddon.DownloadUrl = addon.DownloadUrl;
+                        updatedAddon.Blacklisted = addon.Blacklisted;
+                        updatedAddon.InstalledVersionDate = addon.InstalledVersionDate;
+                    }
+                }
+
+                Addons = updatedAddons;
+            }
+            catch (Exception exception)
+            {
+                Logger.Exception(exception);
+            }
         }
     }
 }
