@@ -58,5 +58,17 @@ namespace WoWAddonUpdater.Properties {
                 this["Log"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AddonData {
+            get {
+                return ((string)(this["AddonData"]));
+            }
+            set {
+                this["AddonData"] = value;
+            }
+        }
     }
 }

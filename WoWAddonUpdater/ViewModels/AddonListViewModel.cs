@@ -11,8 +11,6 @@ namespace WoWAddonUpdater.ViewModels
 
         public ICommand RefreshCommand { get; set; }
 
-        public string Name { get; set; } = "AddonlistViewModel";
-
         public AddonListViewModel()
         {
             RefreshCommand = new RelayCommand(OnRefresh);

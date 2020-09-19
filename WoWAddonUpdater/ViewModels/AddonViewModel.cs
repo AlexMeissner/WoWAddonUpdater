@@ -9,7 +9,6 @@ namespace WoWAddonUpdater.ViewModels
     public class AddonViewModel : BaseViewModel
     {
         public string Name { get; set; }
-        public string DirectoryPath { get; set; }
         public string Icon { get; set; }
         public string DownloadUrl { get; set; }
         public bool Blacklisted { get; set; }

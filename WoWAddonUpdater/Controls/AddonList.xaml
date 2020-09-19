@@ -57,7 +57,7 @@
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </CheckBox.Template>
-                            </CheckBox>                            
+                            </CheckBox>
                         </Grid>
                     </Border>
                 </DataTemplate>
