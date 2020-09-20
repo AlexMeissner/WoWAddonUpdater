@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using WoWAddonUpdater.CurseForge;
 using WoWAddonUpdater.ViewModels;
+using HtmlAgilityPack;
 
 namespace WoWAddonUpdater.Functions
 {
@@ -19,12 +20,16 @@ namespace WoWAddonUpdater.Functions
         private readonly FileVersion WowVersion = new FileVersion(FileVersionInfo.GetVersionInfo(Path.Combine(Properties.Settings.Default.BaseDirectory, "Wow.exe")).FileVersion);
         private readonly string AddonBaseDirectory = Path.Combine(Properties.Settings.Default.BaseDirectory, @"Interface\Addons");
         private readonly string BaseAddress = "https://addons-ecs.forgesvc.net";
+        private readonly string ElvUIAddress = "https://www.tukui.org/download.php?ui=elvui";
+        private readonly string ElvUIVersionXPath = "/html/body/section[3]/div/div/div/div/div[2]/b[1]";
+        private readonly string ElvUIDateXPath = "/html/body/section[3]/div/div/div/div/div[2]/b[2]";
 
         public ObservableCollection<AddonViewModel> GetViewModel()
         {
             var addonDirectories = GetAddonDirectoryNames();
             var curseData = GetCurseForgeData(addonDirectories);
-            return new ObservableCollection<AddonViewModel>(curseData);
+            var elvUIData = GetElvUIData(addonDirectories);
+            return new ObservableCollection<AddonViewModel>(elvUIData.Union(curseData));
         }
 
         public void UpdateAddon(string downloadURL)
@@ -87,31 +92,66 @@ namespace WoWAddonUpdater.Functions
             return addonDirectories;
         }
 
+        private HashSet<AddonViewModel> GetElvUIData(HashSet<string> addonDirectories)
+        {
+            HashSet<AddonViewModel> data = new HashSet<AddonViewModel>();
+
+            try
+            {
+                if (addonDirectories.Where(x => x.Equals("ElvUI")).Count() > 0)
+                {
+                    HtmlWeb web = new HtmlWeb();
+                    HtmlDocument document = web.Load(ElvUIAddress);
+
+                    var versionNode = document.DocumentNode.SelectSingleNode(ElvUIVersionXPath);
+                    var dateNode = document.DocumentNode.SelectSingleNode(ElvUIDateXPath);
+
+                    DateTime date = DateTime.Parse(dateNode.InnerText);
+                    string downloadUrl = string.Format("https://www.tukui.org/downloads/elvui-{0}.zip", versionNode.InnerText);
+
+                    data.Add(new AddonViewModel()
+                    {
+                        Name = "ElvUI",
+                        Icon = "https://avatars0.githubusercontent.com/u/25153064?s=200&v=4",
+                        Blacklisted = false,
+                        AvailableVersionDate = date,
+                        DownloadUrl = downloadUrl
+                    });
+                }
+            }
+            catch (Exception exception)
+            {
+                Logger.Exception(exception);
+            }
+
+            return data;
+        }
+
         private HashSet<AddonViewModel> GetCurseForgeData(HashSet<string> addonDirectories)
         {
             HashSet<AddonViewModel> data = new HashSet<AddonViewModel>();
 
-            using (HttpClient restAPI = new HttpClient())
+            try
             {
-                restAPI.BaseAddress = new Uri(BaseAddress);
-                restAPI.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                const uint pageSize = 10000;
-                uint startIndex = 0;
-
-                while (true)
+                using (HttpClient restAPI = new HttpClient())
                 {
-                    string request = "api/v2/addon/search?gameId=1&pageSize=" + pageSize + "&index=" + startIndex;
+                    restAPI.BaseAddress = new Uri(BaseAddress);
+                    restAPI.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    HttpResponseMessage response = restAPI.GetAsync(request).Result;
+                    const uint pageSize = 10000;
+                    uint startIndex = 0;
 
-                    if (!response.IsSuccessStatusCode)
+                    while (true)
                     {
-                        break;
-                    }
+                        string request = "api/v2/addon/search?gameId=1&pageSize=" + pageSize + "&index=" + startIndex;
 
-                    try
-                    {
+                        HttpResponseMessage response = restAPI.GetAsync(request).Result;
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            break;
+                        }
+
                         string json = response.Content.ReadAsStringAsync().Result;
                         List<AddonData> addons = JsonConvert.DeserializeObject<List<AddonData>>(json);
 
@@ -140,14 +180,14 @@ namespace WoWAddonUpdater.Functions
                                 }
                             }
                         }
-                    }
-                    catch (Exception exception)
-                    {
-                        Logger.Exception(exception);
-                    }
 
-                    startIndex += pageSize;
+                        startIndex += pageSize;
+                    }
                 }
+            }
+            catch (Exception exception)
+            {
+                Logger.Exception(exception);
             }
 
             return data;
