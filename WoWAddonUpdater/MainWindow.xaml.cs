@@ -7,6 +7,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using WoWAddonUpdater.ViewModels;
 using System.Collections.ObjectModel;
 
+using WinForms = System.Windows.Forms;
+
 namespace WoWAddonUpdater
 {
     public partial class MainWindow : Window
@@ -14,6 +16,12 @@ namespace WoWAddonUpdater
         public MainWindow()
         {
             InitializeComponent();
+
+            if (Properties.Settings.Default.BaseDirectory.Length == 0)
+            {
+                OpenPathSelectionDialog();
+            }
+
             DeserializeViewModel();
         }
 
@@ -23,6 +31,16 @@ namespace WoWAddonUpdater
 
             Properties.Settings.Default.IsAutoUpdateEnabled = (DataContext as MainWindowViewModel).IsAutoUpdateActive;
             Properties.Settings.Default.Save();
+        }
+
+        private void OpenPathSelectionDialog()
+        {
+            WinForms.FolderBrowserDialog folderBrowser = new WinForms.FolderBrowserDialog();
+
+            if (folderBrowser.ShowDialog() == WinForms.DialogResult.OK)
+            {
+                Properties.Settings.Default.BaseDirectory = folderBrowser.SelectedPath;
+            }
         }
 
         private void SerializeViewModel()

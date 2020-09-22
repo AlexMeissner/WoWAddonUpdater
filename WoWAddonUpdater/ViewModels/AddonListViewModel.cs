@@ -9,7 +9,7 @@ namespace WoWAddonUpdater.ViewModels
 {
     public class AddonListViewModel : BaseViewModel
     {
-        public ObservableCollection<AddonViewModel> Addons { get; set; }
+        public ObservableCollection<AddonViewModel> Addons { get; set; } = new ObservableCollection<AddonViewModel>();
 
         public ICommand RefreshCommand { get; set; }
 

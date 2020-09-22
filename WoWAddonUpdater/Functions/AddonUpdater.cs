@@ -32,13 +32,13 @@ namespace WoWAddonUpdater.Functions
             return new ObservableCollection<AddonViewModel>(elvUIData.Union(curseData));
         }
 
-        public void UpdateAddon(string downloadURL)
+        public bool UpdateAddon(string downloadURL)
         {
             using (WebClient webClient = new WebClient())
             {
                 try
                 {
-                    string temporaryZipPath = Path.Combine(AddonBaseDirectory, @"\temp.zip");
+                    string temporaryZipPath = Path.Combine(AddonBaseDirectory, "temp.zip");
                     webClient.DownloadFile(downloadURL, temporaryZipPath);
 
                     using (ZipArchive archive = ZipFile.OpenRead(temporaryZipPath))
@@ -59,10 +59,13 @@ namespace WoWAddonUpdater.Functions
                     }
 
                     File.Delete(temporaryZipPath);
+
+                    return true;
                 }
                 catch (Exception exception)
                 {
                     Logger.Exception(exception);
+                    return false;
                 }
             }
         }
@@ -196,21 +199,20 @@ namespace WoWAddonUpdater.Functions
         private LatestFile GetHighestUsableLatestFile(List<LatestFile> latestFiles)
         {
             LatestFile bestMatch = null;
-            FileVersion bestMatchVersion = new FileVersion();
             DateTime bestMatchDate = new DateTime();
 
             foreach (var latestFile in latestFiles)
             {
-                if (latestFile.GameVersionFlavor.Equals("wow_retail"))
+                if (latestFile.GameVersionFlavor.Equals("wow_retail") &&
+                    latestFile.ReleaseType == 1 &&
+                    !IsFuturePatchFile(latestFile))
                 {
-                    var version = GetHighestUsableVersion(latestFile);
                     var date = DateTime.Parse(latestFile.FileDate);
 
-                    if (version >= bestMatchVersion && date > bestMatchDate)
+                    if (date > bestMatchDate)
                     {
                         bestMatch = latestFile;
                         bestMatchDate = date;
-                        bestMatchVersion = version;
                     }
                 }
             }
@@ -218,17 +220,20 @@ namespace WoWAddonUpdater.Functions
             return bestMatch;
         }
 
-        private FileVersion GetHighestUsableVersion(LatestFile latestFile)
+        private bool IsFuturePatchFile(LatestFile latestFile)
         {
-            FileVersion fileVersion = new FileVersion();
+            if (latestFile.GameVersion.Count() + latestFile.SortableGameVersion.Count() == 0)
+            {
+                return false;
+            }
 
             foreach (var gameVersion in latestFile.GameVersion)
             {
                 var version = new FileVersion(gameVersion);
 
-                if (version > fileVersion && version <= WowVersion)
+                if (version <= WowVersion)
                 {
-                    fileVersion = version;
+                    return false;
                 }
             }
 
@@ -236,13 +241,13 @@ namespace WoWAddonUpdater.Functions
             {
                 var version = new FileVersion(gameVersion.GameVersion);
 
-                if (version > fileVersion && version <= WowVersion)
+                if (version <= WowVersion)
                 {
-                    fileVersion = version;
+                    return false;
                 }
             }
 
-            return fileVersion;
+            return true;
         }
 
         private string GetIcon(AddonData addonData)

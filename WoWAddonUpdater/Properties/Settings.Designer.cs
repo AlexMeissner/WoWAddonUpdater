@@ -25,7 +25,7 @@ namespace WoWAddonUpdater.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("G:\\World of Warcraft\\_retail_")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string BaseDirectory {
             get {
                 return ((string)(this["BaseDirectory"]));

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using WoWAddonUpdater.Command;
+using WoWAddonUpdater.Functions;
 
 namespace WoWAddonUpdater.ViewModels
 {
@@ -39,8 +40,19 @@ namespace WoWAddonUpdater.ViewModels
 
         private void Update()
         {
-            InstalledVersionDate = DateTime.Now;
-            Logger.Message("TODO: Update Addon");
+            AddonUpdater addonUpdater = new AddonUpdater();
+
+            if (addonUpdater.UpdateAddon(DownloadUrl))
+            {
+                string updateMessage = string.Format("Updated {0} from {1} to {2}", Name, InstalledVersionDate.ToString(), AvailableVersionDate.ToString());
+                Logger.Message(updateMessage);
+                InstalledVersionDate = DateTime.Now;
+            }
+            else
+            {
+                string updateMessage = string.Format("Failed to update {0} from {1} to {2}", Name, InstalledVersionDate.ToString(), AvailableVersionDate.ToString());
+                Logger.Message(updateMessage);
+            }
         }
     }
 }

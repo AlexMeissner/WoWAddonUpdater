@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="BaseDirectory" Type="System.String" Scope="User">
-      <Value Profile="(Default)">G:\World of Warcraft\_retail_</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="IsAutoUpdateEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
