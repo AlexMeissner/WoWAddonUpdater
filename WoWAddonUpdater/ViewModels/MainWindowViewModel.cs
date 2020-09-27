@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -14,6 +15,14 @@ namespace WoWAddonUpdater.ViewModels
         public Thickness ResizeBorderThickness { get; set; } = new Thickness(2);
         public int TitlebarHeight { get; set; } = 20;
         public AddonListViewModel AddonsViewModel { get; set; } = new AddonListViewModel();
+        public string Title
+        {
+            get
+            {
+                var Version = Assembly.GetExecutingAssembly().GetName().Version;
+                return string.Format("Togel's Addon Updater v{0}.{1}.{2}.{3}", Version.Major, Version.Minor, Version.Build, Version.Revision, Assembly.GetEntryAssembly().GetName().Name);
+            }
+        }
 
         public ICommand AutoUpdateCommand { get; set; }
         public ICommand MinimizeCommand { get; set; }

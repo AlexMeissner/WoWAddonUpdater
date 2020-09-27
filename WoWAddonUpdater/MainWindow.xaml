@@ -33,7 +33,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.ColumnSpan="2" Foreground="LightGray" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">Togel's Addon Updater</TextBlock>
+            <TextBlock Grid.ColumnSpan="2" Foreground="LightGray" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Title}" />
             <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
                 <Button WindowChrome.IsHitTestVisibleInChrome="True" Width="20" Margin="1" Foreground="LightGray" Background="Transparent" Command="{Binding MinimizeCommand}">-</Button>
                 <Button WindowChrome.IsHitTestVisibleInChrome="True" Width="20" Margin="1" Foreground="LightGray" Background="Transparent" Command="{Binding CloseCommand}">X</Button>
