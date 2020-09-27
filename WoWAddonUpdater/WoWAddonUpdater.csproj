@@ -119,6 +119,7 @@
     <Compile Include="CurseForge\LatestFile.cs" />
     <Compile Include="CurseForge\Module.cs" />
     <Compile Include="CurseForge\Section.cs" />
+    <Compile Include="Functions\AutoUpdater.cs" />
     <Compile Include="ViewModels\ViewModelData.cs" />
     <Compile Include="Functions\AddonUpdater.cs" />
     <Compile Include="Functions\FileVersion.cs" />

@@ -70,5 +70,16 @@ namespace WoWAddonUpdater.Properties {
                 this["AddonData"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.DateTime LastUpdate {
+            get {
+                return ((global::System.DateTime)(this["LastUpdate"]));
+            }
+            set {
+                this["LastUpdate"] = value;
+            }
+        }
     }
 }

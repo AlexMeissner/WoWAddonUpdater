@@ -162,24 +162,31 @@ namespace WoWAddonUpdater.Functions
                         {
                             LatestFile latestFile = GetHighestUsableLatestFile(addonData.LatestFiles);
 
-                            if (!addonData.IsExperimental && latestFile != null)
+                            if (!addonData.IsExperimental && latestFile != null && latestFile.Modules.Count() > 0)
                             {
+                                bool AllType3FoldersExist = true;
+                                bool HasType3Folders = false;
+
                                 foreach (var module in latestFile.Modules)
                                 {
-                                    if (addonDirectories.Contains(module.Foldername))
+                                    if (module.Type == 3)
                                     {
-                                        data.Add(new AddonViewModel()
-                                        {
-                                            CurseID = addonData.Id,
-                                            Name = addonData.Name,
-                                            Icon = GetIcon(addonData),
-                                            AvailableVersionDate = DateTime.Parse(latestFile.FileDate),
-                                            DownloadUrl = latestFile.DownloadUrl,
-                                            Blacklisted = false
-                                        });
-
-                                        break;
+                                        HasType3Folders = true;
+                                        AllType3FoldersExist &= addonDirectories.Contains(module.Foldername);
                                     }
+                                }
+
+                                if (HasType3Folders && AllType3FoldersExist)
+                                {
+                                    data.Add(new AddonViewModel()
+                                    {
+                                        CurseID = addonData.Id,
+                                        Name = addonData.Name,
+                                        Icon = GetIcon(addonData),
+                                        AvailableVersionDate = DateTime.Parse(latestFile.FileDate),
+                                        DownloadUrl = latestFile.DownloadUrl,
+                                        Blacklisted = false
+                                    });
                                 }
                             }
                         }
@@ -205,6 +212,7 @@ namespace WoWAddonUpdater.Functions
             {
                 if (latestFile.GameVersionFlavor.Equals("wow_retail") &&
                     latestFile.ReleaseType == 1 &&
+                    latestFile.IsAlternate == false &&
                     !IsFuturePatchFile(latestFile))
                 {
                     var date = DateTime.Parse(latestFile.FileDate);
